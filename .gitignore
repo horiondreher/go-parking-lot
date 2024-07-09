@@ -1,0 +1,10 @@
+# docker
+.data
+
+# env
+.env
+app.env
+scripts/temp/
+
+# output
+bin/
