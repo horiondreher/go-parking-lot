@@ -44,23 +44,23 @@ func (adapter *HTTPAdapter) createUser(w http.ResponseWriter, r *http.Request) e
 		return errorResponse(err)
 	}
 
-	createdUser, err := adapter.userService.CreateUser(r.Context(), ports.NewUser{
+	createdUser, serviceErr := adapter.userService.CreateUser(r.Context(), ports.NewUser{
 		FullName: reqUser.FullName,
 		Email:    reqUser.Email,
 		Password: reqUser.Password,
 	})
 
-	if err != nil {
-		return errorResponse(err)
+	if serviceErr != nil {
+		return errorResponse(serviceErr)
 	}
 
-	httputils.Encode(w, r, http.StatusCreated, CreateUserResponseDto{
+	err = httputils.Encode(w, r, http.StatusCreated, CreateUserResponseDto{
 		UID:      createdUser.UID,
 		FullName: createdUser.FullName,
 		Email:    createdUser.Email,
 	})
 
-	return nil
+	return err
 }
 
 type LoginUserRequestDto struct {
@@ -87,12 +87,12 @@ func (adapter *HTTPAdapter) loginUser(w http.ResponseWriter, r *http.Request) er
 		return errorResponse(err)
 	}
 
-	user, err := adapter.userService.LoginUser(r.Context(), ports.LoginUser{
+	user, serviceErr := adapter.userService.LoginUser(r.Context(), ports.LoginUser{
 		Email:    reqUser.Email,
 		Password: reqUser.Password,
 	})
-	if err != nil {
-		return errorResponse(err)
+	if serviceErr != nil {
+		return errorResponse(serviceErr)
 	}
 
 	accessToken, accessPayload, err := adapter.tokenMaker.CreateToken(user.Email, "user", adapter.config.AccessTokenDuration)
@@ -113,7 +113,7 @@ func (adapter *HTTPAdapter) loginUser(w http.ResponseWriter, r *http.Request) er
 		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
 	}
 
-	_, err = adapter.userService.CreateUserSession(r.Context(), ports.NewUserSession{
+	_, serviceErr = adapter.userService.CreateUserSession(r.Context(), ports.NewUserSession{
 		RefreshTokenID:        refreshPayload.ID,
 		Email:                 loginRes.Email,
 		RefreshToken:          loginRes.RefreshToken,
@@ -121,14 +121,13 @@ func (adapter *HTTPAdapter) loginUser(w http.ResponseWriter, r *http.Request) er
 		UserAgent:             r.UserAgent(),
 		ClientIP:              r.RemoteAddr,
 	})
-
-	if err != nil {
-		return errorResponse(err)
+	if serviceErr != nil {
+		return errorResponse(serviceErr)
 	}
 
-	httputils.Encode(w, r, http.StatusOK, loginRes)
+	err = httputils.Encode(w, r, http.StatusOK, loginRes)
 
-	return nil
+	return err
 }
 
 type RenewAccessTokenRequestDto struct {
@@ -156,9 +155,9 @@ func (adapter *HTTPAdapter) renewAccessToken(w http.ResponseWriter, r *http.Requ
 		return errorResponse(err)
 	}
 
-	session, err := adapter.userService.GetUserSession(r.Context(), refreshPayload.ID)
-	if err != nil {
-		return errorResponse(err)
+	session, serviceErr := adapter.userService.GetUserSession(r.Context(), refreshPayload.ID)
+	if serviceErr != nil {
+		return errorResponse(serviceErr)
 	}
 
 	if session.IsBlocked {
@@ -178,7 +177,6 @@ func (adapter *HTTPAdapter) renewAccessToken(w http.ResponseWriter, r *http.Requ
 	}
 
 	accessToken, accessPayload, err := adapter.tokenMaker.CreateToken(session.UserEmail, "user", adapter.config.AccessTokenDuration)
-
 	if err != nil {
 		return errorResponse(err)
 	}
@@ -188,13 +186,12 @@ func (adapter *HTTPAdapter) renewAccessToken(w http.ResponseWriter, r *http.Requ
 		AccessTokenExpiresAt: accessPayload.ExpiredAt,
 	}
 
-	httputils.Encode(w, r, http.StatusOK, renewAccessTokenResponse)
+	err = httputils.Encode(w, r, http.StatusOK, renewAccessTokenResponse)
 
-	return nil
+	return err
 }
 
 func (adapter *HTTPAdapter) getUserByUID(w http.ResponseWriter, r *http.Request) error {
-
 	payload := r.Context().Value(middleware.KeyAuthUser).(*token.Payload)
 	requestID := middleware.GetRequestID(r.Context())
 
@@ -205,17 +202,16 @@ func (adapter *HTTPAdapter) getUserByUID(w http.ResponseWriter, r *http.Request)
 
 	fmt.Println(userID)
 
-	user, err := adapter.userService.GetUserByUID(r.Context(), userID)
-
-	if err != nil {
-		return errorResponse(err)
+	user, serviceErr := adapter.userService.GetUserByUID(r.Context(), userID)
+	if serviceErr != nil {
+		return errorResponse(serviceErr)
 	}
 
-	httputils.Encode(w, r, http.StatusOK, CreateUserResponseDto{
+	err := httputils.Encode(w, r, http.StatusOK, CreateUserResponseDto{
 		UID:      user.UID,
 		Email:    user.Email,
 		FullName: user.FullName,
 	})
 
-	return nil
+	return err
 }

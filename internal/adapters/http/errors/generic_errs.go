@@ -6,8 +6,6 @@ import (
 	"net/http"
 
 	"github.com/horiondreher/go-parking-lot/internal/adapters/http/token"
-	"github.com/jackc/pgx/v5"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func MatchGenericError(err error) error {
@@ -18,17 +16,6 @@ func MatchGenericError(err error) error {
 			Body: APIErrorBody{
 				Code:   JsonDecodeError,
 				Errors: "The request body is invalid",
-			},
-		}
-	}
-
-	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-		return APIError{
-			HTTPCode:      http.StatusUnauthorized,
-			OriginalError: err.Error(),
-			Body: APIErrorBody{
-				Code:   InvalidPasswordError,
-				Errors: "The password is invalid",
 			},
 		}
 	}
@@ -51,17 +38,6 @@ func MatchGenericError(err error) error {
 			Body: APIErrorBody{
 				Code:   ExpiredToken,
 				Errors: "Expired token",
-			},
-		}
-	}
-
-	if errors.Is(err, pgx.ErrNoRows) {
-		return APIError{
-			HTTPCode:      http.StatusNotFound,
-			OriginalError: err.Error(),
-			Body: APIErrorBody{
-				Code:   NotFoundError,
-				Errors: "Not found",
 			},
 		}
 	}

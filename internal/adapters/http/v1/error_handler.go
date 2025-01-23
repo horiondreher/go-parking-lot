@@ -7,7 +7,6 @@ import (
 	apierrs "github.com/horiondreher/go-parking-lot/internal/adapters/http/errors"
 	"github.com/horiondreher/go-parking-lot/internal/adapters/http/httputils"
 	"github.com/horiondreher/go-parking-lot/internal/utils"
-	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -18,8 +17,6 @@ func errorResponse(err error) error {
 		return apierrs.TransformValidatorError(e)
 	case *json.UnmarshalTypeError:
 		return apierrs.TransformUnmarshalError(e)
-	case *pgconn.PgError:
-		return apierrs.TransformPostgresError(e)
 	case *utils.HashError:
 		return apierrs.APIError{
 			HTTPCode:      http.StatusInternalServerError,
@@ -49,7 +46,7 @@ func notFoundResponse(w http.ResponseWriter, r *http.Request) {
 		Errors: "The requested resource was not found",
 	}
 
-	httputils.Encode(w, r, http.StatusNotFound, httpError)
+	_ = httputils.Encode(w, r, http.StatusNotFound, httpError)
 }
 
 func methodNotAllowedResponse(w http.ResponseWriter, r *http.Request) {
@@ -58,5 +55,5 @@ func methodNotAllowedResponse(w http.ResponseWriter, r *http.Request) {
 		Errors: "The request method is not allowed",
 	}
 
-	httputils.Encode(w, r, http.StatusMethodNotAllowed, httpError)
+	_ = httputils.Encode(w, r, http.StatusMethodNotAllowed, httpError)
 }
