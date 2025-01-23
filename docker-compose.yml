@@ -26,8 +26,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./db/postgres/migration:/app/migration
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - HTTP_SERVER_ADDRESS=${HTTP_SERVER_ADDRESS}
@@ -35,7 +33,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DB_SOURCE=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
-      - MIGRATION_URL=file://migration
+      - MIGRATION_URL=${MIGRATION_URL}
       - TOKEN_SYMMETRIC_KEY=${TOKEN_SYMMETRIC_KEY}
       - ACCESS_TOKEN_DURATION=${ACCESS_TOKEN_DURATION}
       - REFRESH_TOKEN_DURATION=${REFRESH_TOKEN_DURATION}

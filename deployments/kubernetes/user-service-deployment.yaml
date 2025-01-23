@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-parking-lot-user-service
+spec:
+  selector:
+    matchLabels:
+      app: go-parking-lot-user-service
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: go-parking-lot-user-service
+    spec:
+      containers:
+        - name: go-parking-lot-user-service
+          image: 'go-parking-lot-user-service'
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: api-config
+          env:
+            - name: DB_SOURCE
+              value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)?sslmode=disable
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-parking-lot-user-service
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  selector:
+    app: go-parking-lot-user-service

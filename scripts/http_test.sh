@@ -13,7 +13,8 @@ cd "$SCRIPT_DIR" || exit
 ACTION=$1
 
 # Curl variables
-BASE_URL="http://localhost:8080/api/v1"
+MINIKUBE_IP=$(minikube ip)
+BASE_URL="http://$MINIKUBE_IP:30080/api/v1"
 JSON_CONTENT_TYPE="Content-Type: application/json"
 
 # JSON files

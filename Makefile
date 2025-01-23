@@ -2,7 +2,7 @@ run:
 	go run cmd/http/main.go
 
 build:
-	@go build -o bin/go-boilerplate cmd/http/main.go
+	@go build -o bin/go-parking-lot-user-service cmd/http/main.go
 
 test:
 	@go test -v ./...
@@ -24,6 +24,9 @@ migratedown1:
 
 new_migration:
 	migrate create -ext sql -dir db/postgres/migration -seq $(name)
+
+create_configmap:
+	kubectl create configmap api-config --from-env-file=deployments/kubernetes/.env
 
 .PHONY:
 	run build test sqlc migrateup migrateup1 migratedown migratedown1 new_migration 

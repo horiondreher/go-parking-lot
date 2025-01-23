@@ -1,25 +1,52 @@
 
-# Go Web API Boilerplate
+# Go Parking Lot Design
 
-Just writing some golang with things that I like to see in a Web API
+## Deploy services in Kubernetes
 
-## Features
+Store a `.env` in `deployments/kubernetes/.env`:
 
-- Hexagonal Architecture (kinda overengineering but ok. Also, just wrote like this to see how it goes)
-- Simple routing with chi
-- Centralized encoding and decoding
-- Centralized error handling
-- Versioned HTTP Handler
-- SQL type safety with SQLC
-- Migrations with golang migrate
-- PASETO tokens instead of JWT
-- Access and Refresh Tokens
-- Tests that uses Testcontainers instead of mocks
-- Testing scripts that uses cURL and jq (f* Postman)
+```sh
+ENVIRONMENT=
 
-## Required dependencies
+HTTP_SERVER_ADDRESS=
 
-- jq
-- golang-migrate
-- docker
-- sqlc
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+
+MIGRATION_URL=
+
+TOKEN_SYMMETRIC_KEY=
+ACCESS_TOKEN_DURATION=
+REFRESH_TOKEN_DURATION=
+```
+
+Start `minikube`
+
+```sh
+minikube start
+```
+
+Build the service image and set variables for `minikube`:
+
+```sh
+docker build -t go-parking-lot-user-service .
+eval $(minikube docker-env)
+```
+
+Apply the k8s specs files
+
+```sh
+make create_configmap
+kubectl apply -f deployments/kubernetes/persistent-volume.yaml
+kubectl apply -f deployments/kubernetes/postgres-deployment.yaml
+kubectl apply -f deployments/kubernetes/user-service-deployment.yaml
+```
+
+## Other commands
+
+### Delete configmaps
+
+```sh
+kubectl delete configmaps
+```
