@@ -26,7 +26,7 @@ type Payload struct {
 func NewPayload(email string, role string, duration time.Duration) (*Payload, *domainerr.DomainError) {
 	tokenID, err := uuid.NewRandom()
 	if err != nil {
-		return nil, domainerr.NewDomainError(http.StatusInternalServerError, *&domainerr.UnexpectedError, err.Error(), err)
+		return nil, domainerr.NewDomainError(http.StatusInternalServerError, domainerr.UnexpectedError, err.Error(), err)
 	}
 
 	payload := &Payload{
@@ -42,7 +42,7 @@ func NewPayload(email string, role string, duration time.Duration) (*Payload, *d
 
 func (payload *Payload) Valid() *domainerr.DomainError {
 	if time.Now().After(payload.ExpiredAt) {
-		return domainerr.NewDomainError(http.StatusUnauthorized, *&domainerr.ExpiredToken, "Expired Token", ErrExpiredToken)
+		return domainerr.NewDomainError(http.StatusUnauthorized, domainerr.ExpiredToken, "Expired Token", ErrExpiredToken)
 	}
 
 	return nil
