@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/horiondreher/go-parking-lot/internal/adapters/pgsqlc"
-	"github.com/horiondreher/go-parking-lot/internal/domain/errors"
+	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
 	"github.com/horiondreher/go-parking-lot/internal/domain/ports"
 	"github.com/horiondreher/go-parking-lot/internal/utils"
 )
@@ -22,10 +22,10 @@ func NewUserManager(store pgsqlc.Querier) *UserManager {
 	}
 }
 
-func (service *UserManager) CreateUser(ctx context.Context, newUser ports.NewUser) (pgsqlc.CreateUserRow, *errors.DomainError) {
-	hashedPassword, err := utils.HashPassword(newUser.Password)
-	if err != nil {
-		return pgsqlc.CreateUserRow{}, errors.NewDomainError(http.StatusInternalServerError, errors.InternalError, err.Error(), err)
+func (service *UserManager) CreateUser(ctx context.Context, newUser ports.NewUser) (pgsqlc.CreateUserRow, *domainerr.DomainError) {
+	hashedPassword, hashErr := utils.HashPassword(newUser.Password)
+	if hashErr != nil {
+		return pgsqlc.CreateUserRow{}, hashErr
 	}
 
 	args := pgsqlc.CreateUserParams{
@@ -39,27 +39,27 @@ func (service *UserManager) CreateUser(ctx context.Context, newUser ports.NewUse
 
 	user, err := service.store.CreateUser(ctx, args)
 	if err != nil {
-		return pgsqlc.CreateUserRow{}, errors.MatchPostgresError(err)
+		return pgsqlc.CreateUserRow{}, domainerr.MatchPostgresError(err)
 	}
 
 	return user, nil
 }
 
-func (service *UserManager) LoginUser(ctx context.Context, loginUser ports.LoginUser) (pgsqlc.User, *errors.DomainError) {
+func (service *UserManager) LoginUser(ctx context.Context, loginUser ports.LoginUser) (pgsqlc.User, *domainerr.DomainError) {
 	user, err := service.store.GetUser(ctx, loginUser.Email)
 	if err != nil {
-		return pgsqlc.User{}, errors.MatchPostgresError(err)
+		return pgsqlc.User{}, domainerr.MatchPostgresError(err)
 	}
 
-	err = utils.CheckPassword(loginUser.Password, user.Password)
-	if err != nil {
-		return pgsqlc.User{}, errors.MatchHashError(err)
+	passErr := utils.CheckPassword(loginUser.Password, user.Password)
+	if passErr != nil {
+		return pgsqlc.User{}, passErr
 	}
 
 	return user, nil
 }
 
-func (service *UserManager) CreateUserSession(ctx context.Context, newUserSession ports.NewUserSession) (pgsqlc.Session, *errors.DomainError) {
+func (service *UserManager) CreateUserSession(ctx context.Context, newUserSession ports.NewUserSession) (pgsqlc.Session, *domainerr.DomainError) {
 	session, err := service.store.CreateSession(ctx, pgsqlc.CreateSessionParams{
 		UID:          newUserSession.RefreshTokenID,
 		UserEmail:    newUserSession.Email,
@@ -69,30 +69,30 @@ func (service *UserManager) CreateUserSession(ctx context.Context, newUserSessio
 		ClientIP:     newUserSession.ClientIP,
 	})
 	if err != nil {
-		return pgsqlc.Session{}, errors.MatchPostgresError(err)
+		return pgsqlc.Session{}, domainerr.MatchPostgresError(err)
 	}
 
 	return session, nil
 }
 
-func (service *UserManager) GetUserSession(ctx context.Context, refreshTokenID uuid.UUID) (pgsqlc.Session, *errors.DomainError) {
+func (service *UserManager) GetUserSession(ctx context.Context, refreshTokenID uuid.UUID) (pgsqlc.Session, *domainerr.DomainError) {
 	session, err := service.store.GetSession(ctx, refreshTokenID)
 	if err != nil {
-		return pgsqlc.Session{}, errors.MatchPostgresError(err)
+		return pgsqlc.Session{}, domainerr.MatchPostgresError(err)
 	}
 
 	return session, nil
 }
 
-func (service *UserManager) GetUserByUID(ctx context.Context, userUID string) (pgsqlc.User, *errors.DomainError) {
+func (service *UserManager) GetUserByUID(ctx context.Context, userUID string) (pgsqlc.User, *domainerr.DomainError) {
 	parsedUID, err := uuid.Parse(userUID)
 	if err != nil {
-		return pgsqlc.User{}, errors.NewDomainError(http.StatusInternalServerError, errors.UnexpectedError, err.Error(), err)
+		return pgsqlc.User{}, domainerr.NewDomainError(http.StatusInternalServerError, domainerr.UnexpectedError, err.Error(), err)
 	}
 
 	user, err := service.store.GetUserByUID(ctx, parsedUID)
 	if err != nil {
-		return pgsqlc.User{}, errors.MatchPostgresError(err)
+		return pgsqlc.User{}, domainerr.MatchPostgresError(err)
 	}
 
 	return user, nil

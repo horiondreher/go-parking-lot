@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/horiondreher/go-parking-lot/internal/adapters/pgsqlc"
-	"github.com/horiondreher/go-parking-lot/internal/domain/errors"
+	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
 )
 
 type NewUser struct {
@@ -30,9 +30,9 @@ type NewUserSession struct {
 }
 
 type UserService interface {
-	CreateUser(ctx context.Context, newUser NewUser) (pgsqlc.CreateUserRow, *errors.DomainError)
-	LoginUser(ctx context.Context, loginUser LoginUser) (pgsqlc.User, *errors.DomainError)
-	CreateUserSession(ctx context.Context, newUserSession NewUserSession) (pgsqlc.Session, *errors.DomainError)
-	GetUserSession(ctx context.Context, refreshTokenID uuid.UUID) (pgsqlc.Session, *errors.DomainError)
-	GetUserByUID(ctx context.Context, userUID string) (pgsqlc.User, *errors.DomainError)
+	CreateUser(ctx context.Context, newUser NewUser) (pgsqlc.CreateUserRow, *domainerr.DomainError)
+	LoginUser(ctx context.Context, loginUser LoginUser) (pgsqlc.User, *domainerr.DomainError)
+	CreateUserSession(ctx context.Context, newUserSession NewUserSession) (pgsqlc.Session, *domainerr.DomainError)
+	GetUserSession(ctx context.Context, refreshTokenID uuid.UUID) (pgsqlc.Session, *domainerr.DomainError)
+	GetUserByUID(ctx context.Context, userUID string) (pgsqlc.User, *domainerr.DomainError)
 }
