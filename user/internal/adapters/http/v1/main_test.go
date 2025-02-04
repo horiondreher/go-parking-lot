@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/horiondreher/go-parking-lot/internal/adapters/pgsqlc"
-	service "github.com/horiondreher/go-parking-lot/internal/domain/services"
-	"github.com/horiondreher/go-parking-lot/internal/utils"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/pgsqlc"
+	service "github.com/horiondreher/go-parking-lot/user/internal/domain/services"
+	"github.com/horiondreher/go-parking-lot/user/internal/utils"
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"

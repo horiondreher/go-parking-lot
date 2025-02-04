@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
 )
 
 func MatchValidationError(err error) *domainerr.DomainError {

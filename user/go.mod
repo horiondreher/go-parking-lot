@@ -1,4 +1,4 @@
-module github.com/horiondreher/go-parking-lot
+module github.com/horiondreher/go-parking-lot/user
 
 go 1.22.0
 

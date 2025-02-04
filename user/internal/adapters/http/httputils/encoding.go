@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/httperr"
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/httperr"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
 	"github.com/rs/zerolog/log"
 )
 

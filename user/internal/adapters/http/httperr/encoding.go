@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
 )
 
 func MatchEncodingError(err error) *domainerr.DomainError {

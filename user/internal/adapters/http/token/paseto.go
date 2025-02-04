@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/aead/chacha20poly1305"
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
 	"github.com/o1egl/paseto"
 )
 

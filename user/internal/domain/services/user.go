@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/horiondreher/go-parking-lot/internal/adapters/pgsqlc"
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
-	"github.com/horiondreher/go-parking-lot/internal/domain/ports"
-	"github.com/horiondreher/go-parking-lot/internal/utils"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/pgsqlc"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/ports"
+	"github.com/horiondreher/go-parking-lot/user/internal/utils"
 )
 
 type UserManager struct {

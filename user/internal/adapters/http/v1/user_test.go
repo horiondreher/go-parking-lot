@@ -10,8 +10,8 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/horiondreher/go-parking-lot/internal/domain/ports"
-	"github.com/horiondreher/go-parking-lot/internal/utils"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/ports"
+	"github.com/horiondreher/go-parking-lot/user/internal/utils"
 
 	"github.com/stretchr/testify/require"
 )

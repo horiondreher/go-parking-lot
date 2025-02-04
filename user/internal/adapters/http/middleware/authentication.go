@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/httputils"
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/token"
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/httputils"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/token"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
 	"github.com/rs/zerolog/log"
 )
 

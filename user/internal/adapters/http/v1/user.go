@@ -8,12 +8,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/httperr"
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/httputils"
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/middleware"
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/token"
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
-	"github.com/horiondreher/go-parking-lot/internal/domain/ports"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/httperr"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/httputils"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/middleware"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/token"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/ports"
 )
 
 type CreateUserRequestDto struct {

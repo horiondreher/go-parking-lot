@@ -3,8 +3,8 @@ package v1
 import (
 	"net/http"
 
-	"github.com/horiondreher/go-parking-lot/internal/adapters/http/httputils"
-	"github.com/horiondreher/go-parking-lot/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/user/internal/adapters/http/httputils"
+	"github.com/horiondreher/go-parking-lot/user/internal/domain/domainerr"
 )
 
 func notFoundResponse(w http.ResponseWriter, r *http.Request) {
