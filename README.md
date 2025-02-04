@@ -30,7 +30,7 @@ minikube start
 Build the service image and set variables for `minikube`:
 
 ```sh
-docker build -t go-parking-lot-user-service .
+docker build -t go-parking-lot-users-service .
 eval $(minikube docker-env)
 ```
 
@@ -40,7 +40,7 @@ Apply the k8s specs files
 make create_configmap
 kubectl apply -f deployments/kubernetes/persistent-volume.yaml
 kubectl apply -f deployments/kubernetes/postgres-deployment.yaml
-kubectl apply -f deployments/kubernetes/user-service-deployment.yaml
+kubectl apply -f deployments/kubernetes/users-service-deployment.yaml
 ```
 
 ## Other commands
