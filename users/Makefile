@@ -26,7 +26,7 @@ new_migration:
 	migrate create -ext sql -dir db/postgres/migration -seq $(name)
 
 create_configmap:
-	kubectl create configmap api-config --from-env-file=deployments/kubernetes/.env
+	kubectl create configmap api-config --from-env-file=../deployments/kubernetes/users/.env
 
 .PHONY:
 	run build test sqlc migrateup migrateup1 migratedown migratedown1 new_migration 
