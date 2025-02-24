@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: go-parking-lot-users-service
-          image: 'go-parking-lot-users-service'
+          image: "go-parking-lot-users-service"
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
@@ -36,6 +36,6 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
-      nodePort: 30080
   selector:
     app: go-parking-lot-users-service
+

@@ -8,12 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/horiondreher/go-parking-lot/users/internal/adapters/http/httputils"
-	"github.com/horiondreher/go-parking-lot/users/internal/adapters/http/middleware"
-	"github.com/horiondreher/go-parking-lot/users/internal/adapters/http/token"
-	"github.com/horiondreher/go-parking-lot/users/internal/domain/domainerr"
-	"github.com/horiondreher/go-parking-lot/users/internal/domain/ports"
-	"github.com/horiondreher/go-parking-lot/users/internal/utils"
+	"github.com/horiondreher/go-parking-lot/parkings/internal/adapters/http/httputils"
+	"github.com/horiondreher/go-parking-lot/parkings/internal/adapters/http/middleware"
+	"github.com/horiondreher/go-parking-lot/parkings/internal/domain/domainerr"
+	"github.com/horiondreher/go-parking-lot/parkings/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
@@ -36,28 +34,17 @@ func setupValidator() {
 }
 
 type HTTPAdapter struct {
-	userService ports.UserService
-
 	config *utils.Config
 	router *chi.Mux
 	server *http.Server
-
-	tokenMaker *token.PasetoMaker
 }
 
-func NewHTTPAdapter(userService ports.UserService) (*HTTPAdapter, error) {
+func NewHTTPAdapter() (*HTTPAdapter, error) {
 	httpAdapter := &HTTPAdapter{
-		userService: userService,
-		config:      utils.GetConfig(),
+		config: utils.GetConfig(),
 	}
 
 	setupValidator()
-
-	err := httpAdapter.setupTokenMaker()
-	if err != nil {
-		log.Err(err).Msg("error setting up server")
-		return nil, err
-	}
 
 	httpAdapter.setupRouter()
 	httpAdapter.setupServer()
@@ -88,19 +75,15 @@ func (adapter *HTTPAdapter) setupRouter() {
 	router.Use(chiMiddleware.Recoverer)
 	router.Use(chiMiddleware.RedirectSlashes)
 
+	router.NotFound(notFoundResponse)
+	router.MethodNotAllowed(methodNotAllowedResponse)
+
 	v1Router := chi.NewRouter()
 	v1Router.Use(middleware.RequestID)
 	v1Router.Use(middleware.Logger)
 
-	v1Router.Post("/users", adapter.handlerWrapper(adapter.createUser))
-	v1Router.Post("/login", adapter.handlerWrapper(adapter.loginUser))
-	v1Router.Post("/renew-token", adapter.handlerWrapper(adapter.renewAccessToken))
-
-	v1Router.Get("/user/{uid}", adapter.handlerWrapper(adapter.getUserByUID))
 	v1Router.Get("/parkings", adapter.handlerWrapper(adapter.GetReservation))
 
-	router.NotFound(notFoundResponse)
-	router.MethodNotAllowed(methodNotAllowedResponse)
 	router.Mount("/api/v1", v1Router)
 
 	adapter.router = router
@@ -133,17 +116,6 @@ func (adapter *HTTPAdapter) handlerWrapper(handlerFn HandlerWrapper) http.Handle
 
 func (adapter *HTTPAdapter) printRoutes(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
 	log.Info().Str("method", method).Str("route", route).Msg("route registered")
-	return nil
-}
-
-func (adapter *HTTPAdapter) setupTokenMaker() error {
-	tokenMaker, err := token.NewPasetoMaker(adapter.config.TokenSymmetricKey)
-	if err != nil {
-		return err
-	}
-
-	adapter.tokenMaker = tokenMaker
-
 	return nil
 }
 

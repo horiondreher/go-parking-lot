@@ -34,7 +34,7 @@ type DomainError struct {
 func NewDomainError(httpCode int, errorCode string, errorMsg any, err error) *DomainError {
 	return &DomainError{
 		HTTPCode:      httpCode,
-		OriginalError: getOriginalError(err),
+		OriginalError: err.Error(),
 		HTTPErrorBody: HTTPErrorBody{
 			Code:   errorCode,
 			Errors: errorMsg,
@@ -45,7 +45,7 @@ func NewDomainError(httpCode int, errorCode string, errorMsg any, err error) *Do
 func NewInternalError(err error) *DomainError {
 	return &DomainError{
 		HTTPCode:      http.StatusInternalServerError,
-		OriginalError: getOriginalError(err),
+		OriginalError: err.Error(),
 		HTTPErrorBody: HTTPErrorBody{
 			Code:   UnexpectedError,
 			Errors: "Internal server error",
@@ -55,14 +55,4 @@ func NewInternalError(err error) *DomainError {
 
 func (e DomainError) Error() string {
 	return fmt.Sprintf("api error: %d", e.HTTPCode)
-}
-
-func getOriginalError(err error) string {
-	originalError := ""
-
-	if err != nil {
-		originalError = err.Error()
-	}
-
-	return originalError
 }
