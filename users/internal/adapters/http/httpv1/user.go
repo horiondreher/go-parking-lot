@@ -1,4 +1,4 @@
-package v1
+package httpv1
 
 import (
 	"errors"

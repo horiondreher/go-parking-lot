@@ -1,0 +1,23 @@
+
+syntax = "proto3";
+
+package v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "internal/adapters/grpc/proto";
+
+// ReservationService provides reservation details
+service ReservationService {
+  rpc GetReservation(GetReservationRequest) returns (GetReservationResponse);
+}
+
+// Request message (empty, since no params are needed)
+message GetReservationRequest {}
+
+// Response message
+message GetReservationResponse {
+  string id = 1;
+  string type = 2;
+  google.protobuf.Timestamp remaining_time = 3;
+}

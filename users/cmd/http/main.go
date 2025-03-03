@@ -10,7 +10,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	httpV1 "github.com/horiondreher/go-parking-lot/users/internal/adapters/http/v1"
+	"github.com/horiondreher/go-parking-lot/users/internal/adapters/http/httpv1"
 	"github.com/horiondreher/go-parking-lot/users/internal/adapters/pgsqlc"
 	"github.com/horiondreher/go-parking-lot/users/internal/domain/services"
 	"github.com/horiondreher/go-parking-lot/users/internal/utils"
@@ -45,7 +45,7 @@ func main() {
 
 	store := pgsqlc.New(conn)
 	userService := services.NewUserManager(store)
-	server, err := httpV1.NewHTTPAdapter(userService)
+	server, err := httpv1.NewHTTPAdapter(userService)
 	if err != nil {
 		log.Err(err).Msg("error creating server")
 		stop()
