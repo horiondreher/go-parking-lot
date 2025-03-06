@@ -98,6 +98,7 @@ func (adapter *HTTPAdapter) setupRouter() {
 
 	v1Router.Get("/user/{uid}", adapter.handlerWrapper(adapter.getUserByUID))
 	v1Router.Get("/parkings", adapter.handlerWrapper(adapter.GetReservation))
+	v1Router.Get("/parkings/grpc", adapter.handlerWrapper(adapter.GetReservationgRPC))
 
 	router.NotFound(notFoundResponse)
 	router.MethodNotAllowed(methodNotAllowedResponse)
