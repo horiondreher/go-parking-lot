@@ -39,7 +39,7 @@ type HTTPAdapter struct {
 	server *http.Server
 }
 
-func NewHTTPAdapter() (*HTTPAdapter, error) {
+func NewHTTPAdapter() *HTTPAdapter {
 	httpAdapter := &HTTPAdapter{
 		config: utils.GetConfig(),
 	}
@@ -49,7 +49,7 @@ func NewHTTPAdapter() (*HTTPAdapter, error) {
 	httpAdapter.setupRouter()
 	httpAdapter.setupServer()
 
-	return httpAdapter, nil
+	return httpAdapter
 }
 
 func (adapter *HTTPAdapter) Start() error {

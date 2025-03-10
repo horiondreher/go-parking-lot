@@ -58,7 +58,6 @@ func Authentication(tokenMaker *token.PasetoMaker) func(next http.Handler) http.
 			}
 
 			accessToken := fields[1]
-			fmt.Println(accessToken)
 			payload, err := tokenMaker.VerifyToken(accessToken)
 			if err != nil {
 				log.Info().Str("id", requestID).Str("error message", err.Error()).Msg("request error")

@@ -4,6 +4,9 @@ run:
 build:
 	@go build -o bin/go-parking-lot-users-service cmd/http/main.go
 
+docker_build:
+	docker build -t go-parking-lot-users-service . 
+
 test:
 	@go test -v ./...
 
@@ -25,8 +28,15 @@ migratedown1:
 new_migration:
 	migrate create -ext sql -dir db/postgres/migration -seq $(name)
 
+
+k8s_apply: 
+	kubectl apply -f ../deployments/kubernetes/users/users-service-deployment.yaml
+
+k8s_rollout:
+	kubectl rollout restart deployment/go-parking-lot-users-service
+
 create_configmap:
-	kubectl create configmap api-config --from-env-file=../deployments/kubernetes/users/.env
+	kubectl create configmap users-config --from-env-file=../deployments/kubernetes/users/.env
 
 .PHONY:
 	run build test sqlc migrateup migrateup1 migratedown migratedown1 new_migration 

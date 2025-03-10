@@ -11,6 +11,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/horiondreher/go-parking-lot/parkings/internal/adapters/grpc"
 	"github.com/horiondreher/go-parking-lot/parkings/internal/adapters/http/httpv1"
+	"github.com/horiondreher/go-parking-lot/parkings/internal/adapters/queue"
 	"github.com/horiondreher/go-parking-lot/parkings/internal/utils"
 
 	"github.com/rs/zerolog/log"
@@ -31,17 +32,18 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
 	defer stop()
 
-	httpServer, err := httpv1.NewHTTPAdapter()
+	httpAdapter := httpv1.NewHTTPAdapter()
+	queueAdapter, err := queue.NewQueueAdapter()
 	if err != nil {
-		log.Err(err).Msg("error creating server")
+		log.Err(err).Msg("error setting up queue")
 		stop()
 	}
 
-	gRPCServer := grpc.NewAdapter()
+	gRPCServer := grpc.NewAdapter(queueAdapter)
 
 	// starts the server in a goroutine to let the main goroutine listen for the interrupt signal
 	go func() {
-		if err := httpServer.Start(); err != nil && err != http.ErrServerClosed {
+		if err := httpAdapter.Start(); err != nil && err != http.ErrServerClosed {
 			log.Err(err).Msg("error starting http server")
 		}
 	}()
@@ -55,7 +57,7 @@ func main() {
 	<-ctx.Done()
 
 	// gracefully shutdown the server
-	httpServer.Shutdown()
+	httpAdapter.Shutdown()
 
 	log.Info().Msg("server stopped")
 }

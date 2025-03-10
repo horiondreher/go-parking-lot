@@ -12,6 +12,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/horiondreher/go-parking-lot/users/internal/adapters/http/httpv1"
 	"github.com/horiondreher/go-parking-lot/users/internal/adapters/pgsqlc"
+	"github.com/horiondreher/go-parking-lot/users/internal/adapters/queue"
 	"github.com/horiondreher/go-parking-lot/users/internal/domain/services"
 	"github.com/horiondreher/go-parking-lot/users/internal/utils"
 
@@ -45,23 +46,35 @@ func main() {
 
 	store := pgsqlc.New(conn)
 	userService := services.NewUserManager(store)
-	server, err := httpv1.NewHTTPAdapter(userService)
+	httpAdapter, err := httpv1.NewHTTPAdapter(userService)
 	if err != nil {
-		log.Err(err).Msg("error creating server")
+		log.Err(err).Msg("error creating http adapter")
+		stop()
+	}
+
+	queueAdapter, err := queue.NewQueueAdapter()
+	if err != nil {
+		log.Err(err).Msg("error connecting to RabbitMQ")
 		stop()
 	}
 
 	// starts the server in a goroutine to let the main goroutine listen for the interrupt signal
 	go func() {
-		if err := server.Start(); err != nil && err != http.ErrServerClosed {
+		if err := httpAdapter.Start(); err != nil && err != http.ErrServerClosed {
 			log.Err(err).Msg("error starting server")
+		}
+	}()
+
+	go func() {
+		if err := queueAdapter.ConsumeOnUserUpdated(); err != nil {
+			log.Err(err).Msg("error consuming messages from user updates")
 		}
 	}()
 
 	<-ctx.Done()
 
 	// gracefully shutdown the server
-	server.Shutdown()
+	httpAdapter.Shutdown()
 
 	log.Info().Msg("server stopped")
 }

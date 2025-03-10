@@ -63,7 +63,7 @@ func (adapter *HTTPAdapter) GetReservation(w http.ResponseWriter, r *http.Reques
 func (adapter *HTTPAdapter) GetReservationgRPC(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
 	conn, err := grpc.NewClient("go-parking-lot-parkings-service:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Err(err).Msg("failed to connect ")
+		log.Err(err).Msg("failed to connect")
 		return domainerr.NewInternalError(err)
 	}
 	defer conn.Close()

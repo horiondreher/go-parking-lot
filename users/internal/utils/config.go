@@ -15,6 +15,7 @@ import (
 type Config struct {
 	Environment          string        `validate:"required" koanf:"ENVIRONMENT"`
 	HTTPServerAddress    string        `validate:"required" koanf:"HTTP_SERVER_ADDRESS"`
+	QueueServerAddress   string        `validate:"required" koanf:"QUEUE_SERVER_ADDRESS"`
 	DBName               string        `validate:"required" koanf:"POSTGRES_DB"`
 	DBUser               string        `validate:"required" koanf:"POSTGRES_USER"`
 	DBPassword           string        `validate:"required" koanf:"POSTGRES_PASSWORD"`
@@ -40,7 +41,6 @@ func SetConfigFile(file string) {
 
 // GetConfig returns the configuration instance using once.Do to ensure that the configuration is loaded only once
 func GetConfig() *Config {
-
 	once.Do(func() {
 		var err error
 
@@ -53,25 +53,21 @@ func GetConfig() *Config {
 		envProvider := env.Provider("", ".", nil)
 
 		err = k.Load(fileProvider, dotenv.Parser())
-
 		if err != nil {
 			log.Info().Msgf("could not load config file: %s", err.Error())
 		}
 
 		err = k.Load(envProvider, nil)
-
 		if err != nil {
 			log.Info().Msgf("could not environment variables: %s", err.Error())
 		}
 
 		err = k.Unmarshal("", &instance)
-
 		if err != nil {
 			log.Panic().Err(err).Msg("error unmarshing config")
 		}
 
 		err = validate.Struct(instance)
-
 		if err != nil {
 			log.Panic().Err(err).Msg("correct configs were not loaded")
 		}

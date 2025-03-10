@@ -22,7 +22,7 @@ spec:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: api-config
+                name: users-config
           env:
             - name: DB_SOURCE
               value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)?sslmode=disable
@@ -38,4 +38,3 @@ spec:
       targetPort: 8080
   selector:
     app: go-parking-lot-users-service
-

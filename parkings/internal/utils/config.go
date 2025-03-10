@@ -12,9 +12,10 @@ import (
 )
 
 type Config struct {
-	Environment       string `validate:"required" koanf:"ENVIRONMENT"`
-	HTTPServerAddress string `validate:"required" koanf:"HTTP_SERVER_ADDRESS"`
-	GRPCServerPort    string `validate:"required" koanf:"GRPC_SERVER_PORT"`
+	Environment        string `validate:"required" koanf:"ENVIRONMENT"`
+	HTTPServerAddress  string `validate:"required" koanf:"HTTP_SERVER_ADDRESS"`
+	GRPCServerAddress  string `validate:"required" koanf:"GRPC_SERVER_ADDRESS"`
+	QueueServerAddress string `validate:"required" koanf:"QUEUE_SERVER_ADDRESS"`
 }
 
 var configFile string = ".env"
