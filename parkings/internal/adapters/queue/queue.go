@@ -21,16 +21,19 @@ func NewQueueAdapter() (*QueueAdapter, error) {
 	conn, err := amqp091.Dial(config.QueueServerAddress)
 	if err != nil {
 		log.Err(err).Msg("failed to connect to RabbitMQ")
+		return nil, err
 	}
 
 	ch, err := conn.Channel()
 	if err != nil {
 		log.Err(err).Msg("failed to open a channel")
+		return nil, err
 	}
 
 	queue, err := ch.QueueDeclare(UserUpdatedChannel, true, false, false, false, nil)
 	if err != nil {
 		log.Err(err).Msg("failed to decalre a queue")
+		return nil, err
 	}
 
 	log.Info().Msg("connected to RabbitMQ and queue declared")

@@ -9,7 +9,6 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.18.2
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
-	github.com/horiondreher/go-parking-lot/parkings v0.0.0-20250306031733-41b4f1deccaa
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/knadh/koanf/parsers/dotenv v1.0.0
 	github.com/knadh/koanf/providers/env v1.0.0

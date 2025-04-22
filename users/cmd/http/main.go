@@ -48,26 +48,26 @@ func main() {
 	userService := services.NewUserManager(store)
 	httpAdapter, err := httpv1.NewHTTPAdapter(userService)
 	if err != nil {
-		log.Err(err).Msg("error creating http adapter")
-		stop()
+		log.Panic().Err(err).Msg("error creating http adapter")
 	}
 
 	queueAdapter, err := queue.NewQueueAdapter()
 	if err != nil {
-		log.Err(err).Msg("error connecting to RabbitMQ")
-		stop()
+		log.Panic().Err(err).Msg("error connecting to RabbitMQ")
 	}
 
 	// starts the server in a goroutine to let the main goroutine listen for the interrupt signal
 	go func() {
 		if err := httpAdapter.Start(); err != nil && err != http.ErrServerClosed {
 			log.Err(err).Msg("error starting server")
+			stop()
 		}
 	}()
 
 	go func() {
 		if err := queueAdapter.ConsumeOnUserUpdated(); err != nil {
 			log.Err(err).Msg("error consuming messages from user updates")
+			stop()
 		}
 	}()
 

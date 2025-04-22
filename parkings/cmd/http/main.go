@@ -35,8 +35,7 @@ func main() {
 	httpAdapter := httpv1.NewHTTPAdapter()
 	queueAdapter, err := queue.NewQueueAdapter()
 	if err != nil {
-		log.Err(err).Msg("error setting up queue")
-		stop()
+		log.Panic().Err(err).Msg("error setting up queue")
 	}
 
 	gRPCServer := grpc.NewAdapter(queueAdapter)
@@ -45,12 +44,14 @@ func main() {
 	go func() {
 		if err := httpAdapter.Start(); err != nil && err != http.ErrServerClosed {
 			log.Err(err).Msg("error starting http server")
+			stop()
 		}
 	}()
 
 	go func() {
 		if err := gRPCServer.Start(); err != nil {
 			log.Err(err).Msg("error starting grpc server")
+			stop()
 		}
 	}()
 
